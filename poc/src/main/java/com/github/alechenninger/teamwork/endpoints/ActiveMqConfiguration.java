@@ -7,6 +7,7 @@ import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.CamelContext;
 
 import javax.jms.ConnectionFactory;
+import java.util.Collections;
 
 /**
  * Serializable document describing an active mq client component config.
@@ -46,6 +47,12 @@ public class ActiveMqConfiguration implements ComponentConfiguration {
     ConnectionFactory connectionFactory = getConnectionFactory();
     component.setConnectionFactory(connectionFactory);
     context.addComponent(componentName(), component);
+  }
+
+  // TODO: Options could be customized somehow? Also not sure if this is really needed
+  @Override
+  public UriFactory getDefaultUriFactory() {
+    return new PathBasedUriFactory(componentName(), Collections.<String, String>emptyMap());
   }
 
   public String userName() {
