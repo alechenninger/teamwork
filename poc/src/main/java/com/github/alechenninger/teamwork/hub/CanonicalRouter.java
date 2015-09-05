@@ -1,5 +1,7 @@
 package com.github.alechenninger.teamwork.hub;
 
+import com.github.alechenninger.teamwork.MessageType;
+import com.github.alechenninger.teamwork.UserName;
 import com.github.alechenninger.teamwork.endpoints.ConsumerPickUpUriFactory;
 
 import org.apache.camel.Exchange;
@@ -18,11 +20,11 @@ import java.util.Set;
 public class CanonicalRouter extends RouteBuilder {
   private final CanonicalTopicUriFactory canonicalTopic; // factory... could be String uri
   private final Predicate canonicalValidator; // actual thing... could be ValidatorFactory
-  private final Map<String, Predicate> userConsumerFilters = new HashMap<>();
+  private final Map<UserName, Predicate> userConsumerFilters = new HashMap<>();
   private final ConsumerPickUpUriFactory consumerPickUpUriFactory;
-  private final String messageType;
+  private final MessageType messageType;
 
-  public CanonicalRouter(String messageType, Predicate canonicalValidator,
+  public CanonicalRouter(MessageType messageType, Predicate canonicalValidator,
       CanonicalTopicUriFactory canonicalTopic, ConsumerPickUpUriFactory consumerPickUpUriFactory) {
     this.canonicalTopic = canonicalTopic;
     this.canonicalValidator = canonicalValidator;
@@ -30,7 +32,7 @@ public class CanonicalRouter extends RouteBuilder {
     this.messageType = messageType;
   }
 
-  public void addOrUpdateConsumer(String userName, Predicate filter) {
+  public void addOrUpdateConsumer(UserName userName, Predicate filter) {
     userConsumerFilters.put(
         Objects.requireNonNull(userName, "userName"),
         Objects.requireNonNull(filter, "filter"));
@@ -49,8 +51,8 @@ public class CanonicalRouter extends RouteBuilder {
       public Object evaluate(Exchange exchange) {
         Set<String> consumerUris = new HashSet<>(userConsumerFilters.size());
 
-        for (Map.Entry<String, Predicate> userConsumerFilter : userConsumerFilters.entrySet()) {
-          String userName = userConsumerFilter.getKey();
+        for (Map.Entry<UserName, Predicate> userConsumerFilter : userConsumerFilters.entrySet()) {
+          UserName userName = userConsumerFilter.getKey();
           Predicate filter = userConsumerFilter.getValue();
 
           if (filter.matches(exchange)) {

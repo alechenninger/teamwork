@@ -13,25 +13,25 @@ public interface Manage {
   // Also filters probably don't need to be per version? This would mean they need to be compatible
   // with all versions though.
 
-  void addUser(String userName);
+  void addUser(UserName userName);
 
-  void addProducer(String userName, ProducerPlugin producer);
+  void addProducer(UserName userName, ProducerPlugin producer);
 
-  void activateProducer(String userName, String messageType, String version);
+  void activateProducer(UserName userName, MessageType messageType, Version version);
 
   // Controls what a producer is allowed to produce. By default this should be "passes validation"
   // (Not necessarily actually, think about handling filtered due to permissions vs would've been
   // allowed if passed validation)
   // but might want to also add something else. Or by default might want to be "filters out
   // everything" so you explicitly allow producing from a user.
-  void filterProducer(String userName, String messageType, Predicate filter);
+  void filterProducer(UserName userName, MessageType messageType, Predicate filter);
 
-  void addConsumer(String userName, ConsumerPlugin consumer);
+  void addConsumer(UserName userName, ConsumerPlugin consumer);
 
-  void activateConsumer(String userName, String messageType, String version);
+  void activateConsumer(UserName userName, MessageType messageType, Version version);
 
   // Controls what data a consumer has access to
-  void filterConsumer(String userName, String messageType, Predicate filter);
+  void filterConsumer(UserName userName, MessageType messageType, Predicate filter);
 
-  void addMessageType(String messageType, Predicate validator);
+  void addMessageType(UserName messageType, Predicate validator);
 }

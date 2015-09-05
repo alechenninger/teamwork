@@ -6,11 +6,11 @@ import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 import org.apache.camel.Predicate;
 
 public interface Repository {
-  String getUserName();
-  ProducerPlugin getProducerPlugin(String messageType, String version);
-  ConsumerPlugin getConsumerPlugin(String messageType, String version);
+  UserName getUserName();
+  ProducerPlugin getProducerPlugin(MessageType messageType, Version version);
+  ConsumerPlugin getConsumerPlugin(MessageType messageType, Version version);
   // TODO: Should these be versioned and "installed" then "activated" like plugins?
-  Predicate getFilter(String messageType);
+  Predicate getFilter(MessageType messageType);
   // TODO: Including mapping of predicates to message types?
   // This gets into whether or not message types should be "presorted" (already sorted by queue)
   // or all dumped in one bucket then resorted again.

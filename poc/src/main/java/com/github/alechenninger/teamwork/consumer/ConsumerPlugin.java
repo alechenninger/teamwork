@@ -1,11 +1,14 @@
 package com.github.alechenninger.teamwork.consumer;
 
+import com.github.alechenninger.teamwork.MessageType;
+import com.github.alechenninger.teamwork.Version;
+
 import org.apache.camel.RoutesBuilder;
 
 public interface ConsumerPlugin {
-  String messageType();
+  MessageType messageType();
 
   RoutesBuilder route();
 
-  String version();
+  Version version();
 }

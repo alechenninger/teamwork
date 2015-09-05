@@ -1,5 +1,7 @@
 package com.github.alechenninger.teamwork.hub;
 
+import com.github.alechenninger.teamwork.MessageType;
+import com.github.alechenninger.teamwork.UserName;
 import com.github.alechenninger.teamwork.endpoints.HubUriFactory;
 
 import org.apache.camel.Predicate;
@@ -8,12 +10,12 @@ import org.apache.camel.builder.RouteBuilder;
 // Per user per type
 public class CanonicalProducer extends RouteBuilder {
   private final HubUriFactory hubUri;
-  private final String userName;
-  private final String messageType;
+  private final UserName userName;
+  private final MessageType messageType;
   private final CanonicalTopicUriFactory canonicalTopic;
   private final Predicate producerFilter;
 
-  public CanonicalProducer(String userName, String messageType, Predicate producerFilter,
+  public CanonicalProducer(UserName userName, MessageType messageType, Predicate producerFilter,
       HubUriFactory hubUri, CanonicalTopicUriFactory canonicalTopic) {
     this.hubUri = hubUri;
     this.userName = userName;
