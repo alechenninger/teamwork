@@ -2,7 +2,7 @@ package com.github.alechenninger.teamwork.consumer;
 
 import org.apache.camel.RoutesBuilder;
 
-public interface MessageConsumer {
+public interface ConsumerPlugin {
   String messageType();
 
   RoutesBuilder route();

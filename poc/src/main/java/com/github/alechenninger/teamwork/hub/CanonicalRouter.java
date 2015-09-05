@@ -1,6 +1,6 @@
 package com.github.alechenninger.teamwork.hub;
 
-import com.github.alechenninger.teamwork.consumer.ConsumerPickUpUriFactory;
+import com.github.alechenninger.teamwork.endpoints.ConsumerPickUpUriFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;

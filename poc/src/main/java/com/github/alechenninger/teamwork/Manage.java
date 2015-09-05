@@ -1,7 +1,7 @@
 package com.github.alechenninger.teamwork;
 
-import com.github.alechenninger.teamwork.consumer.MessageConsumer;
-import com.github.alechenninger.teamwork.producer.MessageProducer;
+import com.github.alechenninger.teamwork.consumer.ConsumerPlugin;
+import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 
 import org.apache.camel.Predicate;
 
@@ -13,10 +13,9 @@ public interface Manage {
   // Also filters probably don't need to be per version? This would mean they need to be compatible
   // with all versions though.
 
-  // TODO: consider camel context per user
   void addUser(String userName);
 
-  void addProducer(String userName, MessageProducer producer);
+  void addProducer(String userName, ProducerPlugin producer);
 
   void activateProducer(String userName, String messageType, String version);
 
@@ -27,7 +26,7 @@ public interface Manage {
   // everything" so you explicitly allow producing from a user.
   void filterProducer(String userName, String messageType, Predicate filter);
 
-  void addConsumer(String userName, MessageConsumer consumer);
+  void addConsumer(String userName, ConsumerPlugin consumer);
 
   void activateConsumer(String userName, String messageType, String version);
 

@@ -1,5 +1,7 @@
 package com.github.alechenninger.teamwork.hub;
 
+import com.github.alechenninger.teamwork.endpoints.HubUriFactory;
+
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 

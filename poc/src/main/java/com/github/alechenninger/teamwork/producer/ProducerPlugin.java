@@ -2,7 +2,7 @@ package com.github.alechenninger.teamwork.producer;
 
 import org.apache.camel.RoutesBuilder;
 
-public interface MessageProducer {
+public interface ProducerPlugin {
   /**
    * Not version of message type, but version of producer. A message type + version can have
    * multiple producer implementations per user. For example, you are still producing a "User"

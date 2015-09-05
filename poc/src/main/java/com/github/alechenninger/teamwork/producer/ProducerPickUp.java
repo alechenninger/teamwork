@@ -1,5 +1,7 @@
 package com.github.alechenninger.teamwork.producer;
 
+import com.github.alechenninger.teamwork.endpoints.ProducerPickUpUriFactory;
+
 import org.apache.camel.builder.RouteBuilder;
 
 public class ProducerPickUp extends RouteBuilder {

@@ -1,5 +1,7 @@
 package com.github.alechenninger.teamwork.consumer;
 
+import com.github.alechenninger.teamwork.endpoints.ConsumerPickUpUriFactory;
+
 import org.apache.camel.builder.RouteBuilder;
 
 public class ConsumerPickUp extends RouteBuilder {

@@ -1,6 +1,6 @@
 package com.github.alechenninger.teamwork.producer;
 
-import com.github.alechenninger.teamwork.hub.HubUriFactory;
+import com.github.alechenninger.teamwork.endpoints.HubUriFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 

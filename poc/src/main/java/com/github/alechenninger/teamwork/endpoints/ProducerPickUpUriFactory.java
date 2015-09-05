@@ -1,4 +1,4 @@
-package com.github.alechenninger.teamwork.producer;
+package com.github.alechenninger.teamwork.endpoints;
 
 /**
  * Defines the entry point for a producer route.
