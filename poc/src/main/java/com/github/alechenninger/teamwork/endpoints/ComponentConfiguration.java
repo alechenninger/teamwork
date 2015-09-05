@@ -10,5 +10,4 @@ import org.apache.camel.CamelContext;
  */
 public interface ComponentConfiguration {
   void addToCamelContext(CamelContext context) throws Exception;
-  UriFactory getDefaultUriFactory();
 }

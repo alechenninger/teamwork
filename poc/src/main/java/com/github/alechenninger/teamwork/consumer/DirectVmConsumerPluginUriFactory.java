@@ -5,7 +5,7 @@ import com.github.alechenninger.teamwork.UserName;
 
 import com.google.common.base.Joiner;
 
-public class DirectVmConsumerPluginUriFactory implements ConsumerPluginUriFactory {
+public final class DirectVmConsumerPluginUriFactory implements ConsumerPluginUriFactory {
   @Override
   public String toConsumerPlugin(UserName userName, MessageType messageType) {
     return "direct-vm:" + Joiner.on('_').join("to", "consumer", userName, messageType);

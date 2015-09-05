@@ -2,6 +2,7 @@ package com.github.alechenninger.teamwork.consumer;
 
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
+import com.github.alechenninger.teamwork.endpoints.Destination;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +26,6 @@ public class ConsumerDelivery extends RouteBuilder {
     from(pluginUriFactory.fromConsumerPlugin(userName, messageType))
         .routeId("consumer_delivery_" + userName + messageType)
         // TODO: logging, metrics, reporting
-        .to(deliveryUriFactory.forUserAndMessageType(userName, messageType));
+        .to(deliveryUriFactory.forDestination(userName, messageType, Destination.APPLICATION));
   }
 }

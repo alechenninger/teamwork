@@ -2,6 +2,7 @@ package com.github.alechenninger.teamwork.hub;
 
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
+import com.github.alechenninger.teamwork.endpoints.Destination;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
 import org.apache.camel.Exchange;
@@ -56,7 +57,7 @@ public class CanonicalRouter extends RouteBuilder {
           Predicate filter = userConsumerFilter.getValue();
 
           if (filter.matches(exchange)) {
-            consumerUris.add(uriFactory.forUserAndMessageType(userName, messageType));
+            consumerUris.add(uriFactory.forDestination(userName, messageType, Destination.CONSUMER));
           } else {
             // TODO: log / report
           }

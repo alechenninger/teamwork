@@ -2,6 +2,7 @@ package com.github.alechenninger.teamwork.producer;
 
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
+import com.github.alechenninger.teamwork.endpoints.Destination;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -22,7 +23,7 @@ public class ProducerPickUp extends RouteBuilder {
 
   @Override
   public void configure() throws Exception {
-    from(pickUpUriFactory.forUserAndMessageType(userName, messageType))
+    from(pickUpUriFactory.forDestination(userName, messageType, Destination.PRODUCER))
         .routeId("producer_pick_up_" + userName + messageType)
         // TODO: Throttling, logging, metrics, reporting
         .to(pluginUriFactory.toProducerPlugin(userName, messageType));

@@ -49,12 +49,6 @@ public class ActiveMqConfiguration implements ComponentConfiguration {
     context.addComponent(componentName(), component);
   }
 
-  // TODO: Options could be customized somehow? Also not sure if this is really needed
-  @Override
-  public UriFactory getDefaultUriFactory() {
-    return new PathBasedUriFactory(componentName(), Collections.<String, String>emptyMap());
-  }
-
   public String userName() {
     return userName;
   }

@@ -2,6 +2,7 @@ package com.github.alechenninger.teamwork.hub;
 
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
+import com.github.alechenninger.teamwork.endpoints.Destination;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
 import org.apache.camel.Predicate;
@@ -26,7 +27,7 @@ public class CanonicalProducer extends RouteBuilder {
 
   @Override
   public void configure() throws Exception {
-    from(hubUri.forUserAndMessageType(userName, messageType))
+    from(hubUri.forDestination(userName, messageType, Destination.HUB))
         .choice()
           .when(passesFilter())
           .to(canonicalTopic.forMessageType(messageType))

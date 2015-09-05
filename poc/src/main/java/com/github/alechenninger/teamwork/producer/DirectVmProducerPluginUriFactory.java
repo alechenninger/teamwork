@@ -5,7 +5,7 @@ import com.github.alechenninger.teamwork.UserName;
 
 import com.google.common.base.Joiner;
 
-public class DirectVmProducerPluginUriFactory implements ProducerPluginUriFactory {
+public final class DirectVmProducerPluginUriFactory implements ProducerPluginUriFactory {
   @Override
   public String toProducerPlugin(UserName userName, MessageType messageType) {
     return "direct-vm:" + Joiner.on('_').join("to", "producer", userName, messageType);

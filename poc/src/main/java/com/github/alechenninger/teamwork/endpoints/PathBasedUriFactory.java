@@ -24,16 +24,14 @@ public final class PathBasedUriFactory implements UriFactory {
   }
 
   @Override
-  public String forUserAndMessageType(UserName userName, MessageType messageType) {
+  public String forDestination(UserName userName, MessageType messageType,
+      Destination destination) {
     if (options.isEmpty()) {
-      return component + ":" + path(userName, messageType);
+      return component + ":" + Joiner.on('_').join(destination, userName, messageType);
     }
 
-    return component + ":" + path(userName, messageType) + "?" +
-        Joiner.on('&').withKeyValueSeparator("=").join(options);
-  }
-
-  private String path(UserName userName, MessageType messageType) {
-    return userName + "_" + messageType;
+    return component +
+        ":" + Joiner.on('_').join(destination, userName, messageType) +
+        "?" + Joiner.on('&').withKeyValueSeparator("=").join(options);
   }
 }

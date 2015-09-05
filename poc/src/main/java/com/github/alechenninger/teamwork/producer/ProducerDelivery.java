@@ -2,6 +2,7 @@ package com.github.alechenninger.teamwork.producer;
 
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
+import com.github.alechenninger.teamwork.endpoints.Destination;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +26,6 @@ public class ProducerDelivery extends RouteBuilder {
     from(pluginUriFactory.fromProducerPlugin(userName, messageType))
         .routeId("producer_delivery_" + userName + messageType)
         // TODO: logging, metrics, reporting
-        .to(uriFactory.forUserAndMessageType(userName, messageType));
+        .to(uriFactory.forDestination(userName, messageType, Destination.HUB));
   }
 }

@@ -14,7 +14,8 @@ public final class StaticUriFactory implements UriFactory {
   }
 
   @Override
-  public String forUserAndMessageType(UserName userName, MessageType messageType) {
+  public String forDestination(UserName userName, MessageType messageType,
+      Destination destination) {
     return uri;
   }
 }

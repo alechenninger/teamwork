@@ -30,9 +30,10 @@ public final class OptionBasedUriFactory implements UriFactory {
   }
 
   @Override
-  public String forUserAndMessageType(UserName userName, MessageType messageType) {
+  public String forDestination(UserName userName, MessageType messageType,
+      Destination destination) {
     Map<String, String> generatedOpts = new HashMap<>(options);
-    generatedOpts.put(optionOfInterest, userName + "_" + messageType);
+    generatedOpts.put(optionOfInterest, Joiner.on('_').join(destination, userName, messageType));
     return component + ":" + path + "?" + Joiner.on('&').withKeyValueSeparator("=").join(options);
   }
 }
