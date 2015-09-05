@@ -2,7 +2,7 @@ package com.github.alechenninger.teamwork.hub;
 
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
-import com.github.alechenninger.teamwork.endpoints.ConsumerPickUpUriFactory;
+import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -21,14 +21,14 @@ public class CanonicalRouter extends RouteBuilder {
   private final CanonicalTopicUriFactory canonicalTopic; // factory... could be String uri
   private final Predicate canonicalValidator; // actual thing... could be ValidatorFactory
   private final Map<UserName, Predicate> userConsumerFilters = new HashMap<>();
-  private final ConsumerPickUpUriFactory consumerPickUpUriFactory;
+  private final UriFactory uriFactory;
   private final MessageType messageType;
 
   public CanonicalRouter(MessageType messageType, Predicate canonicalValidator,
-      CanonicalTopicUriFactory canonicalTopic, ConsumerPickUpUriFactory consumerPickUpUriFactory) {
+      CanonicalTopicUriFactory canonicalTopic, UriFactory uriFactory) {
     this.canonicalTopic = canonicalTopic;
     this.canonicalValidator = canonicalValidator;
-    this.consumerPickUpUriFactory = consumerPickUpUriFactory;
+    this.uriFactory = uriFactory;
     this.messageType = messageType;
   }
 
@@ -56,7 +56,7 @@ public class CanonicalRouter extends RouteBuilder {
           Predicate filter = userConsumerFilter.getValue();
 
           if (filter.matches(exchange)) {
-            consumerUris.add(consumerPickUpUriFactory.forUserAndMessageType(userName, messageType));
+            consumerUris.add(uriFactory.forUserAndMessageType(userName, messageType));
           } else {
             // TODO: log / report
           }

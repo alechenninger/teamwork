@@ -2,7 +2,7 @@ package com.github.alechenninger.teamwork.consumer;
 
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
-import com.github.alechenninger.teamwork.endpoints.ConsumerDeliveryUriFactory;
+import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -10,10 +10,10 @@ public class ConsumerDelivery extends RouteBuilder {
   private final UserName userName;
   private final MessageType messageType;
   private final ConsumerPluginUriFactory pluginUriFactory;
-  private final ConsumerDeliveryUriFactory deliveryUriFactory;
+  private final UriFactory deliveryUriFactory;
 
   public ConsumerDelivery(UserName userName, MessageType messageType, ConsumerPluginUriFactory
-      pluginUriFactory, ConsumerDeliveryUriFactory deliveryUriFactory) {
+      pluginUriFactory, UriFactory deliveryUriFactory) {
     this.userName = userName;
     this.messageType = messageType;
     this.pluginUriFactory = pluginUriFactory;

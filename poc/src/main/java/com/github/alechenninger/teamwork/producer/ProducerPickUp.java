@@ -2,7 +2,7 @@ package com.github.alechenninger.teamwork.producer;
 
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
-import com.github.alechenninger.teamwork.endpoints.ProducerPickUpUriFactory;
+import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -10,10 +10,10 @@ public class ProducerPickUp extends RouteBuilder {
   private final UserName userName;
   private final MessageType messageType;
   private final ProducerPluginUriFactory pluginUriFactory;
-  private final ProducerPickUpUriFactory pickUpUriFactory;
+  private final UriFactory pickUpUriFactory;
 
   public ProducerPickUp(UserName userName, MessageType messageType,
-      ProducerPluginUriFactory pluginUriFactory, ProducerPickUpUriFactory pickUpUriFactory) {
+      ProducerPluginUriFactory pluginUriFactory, UriFactory pickUpUriFactory) {
     this.userName = userName;
     this.messageType = messageType;
     this.pluginUriFactory = pluginUriFactory;
