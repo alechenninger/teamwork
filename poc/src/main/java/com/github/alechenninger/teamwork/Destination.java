@@ -1,4 +1,4 @@
-package com.github.alechenninger.teamwork.endpoints;
+package com.github.alechenninger.teamwork;
 
 /**
  * The four core destinations a message is persisted. Each is named after where the message is being
@@ -6,7 +6,7 @@ package com.github.alechenninger.teamwork.endpoints;
  */
 public enum Destination {
   PRODUCER("producer"),
-  HUB("hub"),
+  ROUTER("router"),
   CONSUMER("consumer"),
   APPLICATION("application"); // TODO: Better name?
 

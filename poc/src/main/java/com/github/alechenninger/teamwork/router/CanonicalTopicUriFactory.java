@@ -1,4 +1,4 @@
-package com.github.alechenninger.teamwork.hub;
+package com.github.alechenninger.teamwork.router;
 
 import com.github.alechenninger.teamwork.MessageType;
 

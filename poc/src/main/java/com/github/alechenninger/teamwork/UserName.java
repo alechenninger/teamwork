@@ -1,7 +1,5 @@
 package com.github.alechenninger.teamwork;
 
-import com.google.common.base.Preconditions;
-
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Objects;
@@ -16,6 +14,7 @@ public final class UserName implements Serializable, Comparable<String>, CharSeq
 
   public UserName(@Nonnull String userName) {
     // TODO: validation... what is valid in a URI? utf8?
+
     this.userName = Objects.requireNonNull(userName, "userName");
   }
 

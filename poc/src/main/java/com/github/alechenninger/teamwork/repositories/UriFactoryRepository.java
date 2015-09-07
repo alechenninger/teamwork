@@ -1,4 +1,6 @@
-package com.github.alechenninger.teamwork.endpoints;
+package com.github.alechenninger.teamwork.repositories;
+
+import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
 import java.util.Map;
 

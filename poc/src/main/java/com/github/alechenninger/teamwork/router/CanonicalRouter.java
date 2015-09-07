@@ -1,8 +1,8 @@
-package com.github.alechenninger.teamwork.hub;
+package com.github.alechenninger.teamwork.router;
 
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
-import com.github.alechenninger.teamwork.endpoints.Destination;
+import com.github.alechenninger.teamwork.Destination;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
 import org.apache.camel.Exchange;

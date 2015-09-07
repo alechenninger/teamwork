@@ -7,7 +7,7 @@ public final class MessageType {
   private final String name;
   private final Version version;
 
-  public MessageType(@Nonnull String name,@Nonnull Version version) {
+  public MessageType(@Nonnull String name, @Nonnull Version version) {
     this.name = Objects.requireNonNull(name, "name");
     this.version = Objects.requireNonNull(version, "version");
   }

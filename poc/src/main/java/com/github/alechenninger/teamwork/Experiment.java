@@ -16,6 +16,7 @@ public class Experiment {
       @Override
       public void configure() throws Exception {
         from("")
+            .filter(simple(""))
             .process(ScriptBuilder.javaScript(""))
             .policy(new Policy() {
               public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {

@@ -1,4 +1,4 @@
-package com.github.alechenninger.teamwork;
+package com.github.alechenninger.teamwork.repositories;
 
 import org.apache.camel.CamelContext;
 

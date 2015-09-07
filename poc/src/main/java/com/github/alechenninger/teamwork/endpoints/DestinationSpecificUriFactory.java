@@ -1,5 +1,6 @@
 package com.github.alechenninger.teamwork.endpoints;
 
+import com.github.alechenninger.teamwork.Destination;
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
 

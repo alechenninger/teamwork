@@ -31,6 +31,10 @@ public final class Version implements Comparable<Version> {
     return new Version(major, minor, patch);
   }
 
+  public static Version v1_0_0() {
+    return new Version(1, 0, 0);
+  }
+
   public int major() {
     return major;
   }
