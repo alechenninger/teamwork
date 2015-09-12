@@ -18,6 +18,8 @@
 
 package com.github.alechenninger.teamwork;
 
+import com.github.alechenninger.teamwork.consumer.ConsumerPluginUriFactory;
+import com.github.alechenninger.teamwork.consumer.DirectVmConsumerPluginUriFactory;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
 import com.github.alechenninger.teamwork.producer.DirectVmProducerPluginUriFactory;
 import com.github.alechenninger.teamwork.producer.PreSortedProducerPickUp;
@@ -25,22 +27,29 @@ import com.github.alechenninger.teamwork.producer.ProducerDelivery;
 import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 import com.github.alechenninger.teamwork.producer.ProducerPluginUriFactory;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+// TODO: This API should be an interface
 public class Teamwork {
   private final CamelContext teamworkContext;
   // TODO: Need to be more flexible about uri's (multicast to multiple routers, send to different application endpoints...)
   private final UriFactory uriFactory;
+
   private final Map<UserMessageType, CamelContext> producerContexts = new HashMap<>();
   private final Map<UserMessageType, CamelContext> consumerContexts = new HashMap<>();
+
+  // TODO: Inject this or maybe handle some other way
+  private final ProducerPluginUriFactory producerUriFactory = new DirectVmProducerPluginUriFactory();
+  private final ConsumerPluginUriFactory consumerUriFactory = new DirectVmConsumerPluginUriFactory();
 
   public Teamwork(UriFactory uriFactory, CamelContext teamworkContext) {
     this.uriFactory = Objects.requireNonNull(uriFactory, "uriFactory");
@@ -52,38 +61,39 @@ public class Teamwork {
   }
 
   public void addProducerPlugin(UserName userName, ProducerPlugin plugin) throws Exception {
-    ProducerPluginUriFactory pluginUriFactory = new DirectVmProducerPluginUriFactory();
     MessageType messageType = plugin.messageType();
-    PreSortedProducerPickUp pickUpRoute = new PreSortedProducerPickUp(userName, messageType,
-        pluginUriFactory, uriFactory);
-    pickUpRoute.addRoutesToCamelContext(teamworkContext);
 
     RoutesBuilder pluginRoute = plugin.createRoute(
-        pluginUriFactory.toProducerPlugin(userName, messageType),
-        pluginUriFactory.fromProducerPlugin(userName, messageType));
+        producerUriFactory.toProducerPlugin(userName, messageType),
+        producerUriFactory.fromProducerPlugin(userName, messageType));
 
-    CamelContext producerContext = getProducerContextOrCreate(userName, messageType);
-    producerContext.addRoutes(pluginRoute);
+    CamelContext newContextForProducer = plugin.createContext();
+    // TODO: Sanity check new context is empty && not started
+    newContextForProducer.setNameStrategy(new DefaultCamelContextNameStrategy(
+        Joiner.on('-').join(userName, "producer", plugin)));
 
-    ProducerDelivery deliveryRoute = new ProducerDelivery(userName, messageType, pluginUriFactory, uriFactory);
-    deliveryRoute.addRoutesToCamelContext(teamworkContext);
-  }
-
-  private CamelContext getProducerContextOrCreate(UserName userName, MessageType messageType) throws Exception {
     UserMessageType userMessageType = new UserMessageType(userName, messageType);
-    CamelContext context = producerContexts.get(userMessageType);
-    if (context == null) {
-      // TODO: context factory? (should we be newing here or should this be more IoC?)
-      // Probably should do something like that b/c context has state like registry, properties, etc
-      context = new DefaultCamelContext();
-      producerContexts.put(userMessageType, context);
+    CamelContext previous = producerContexts.put(userMessageType, newContextForProducer);
 
-      // TODO: handle starting?
-      if (teamworkContext.getStatus().equals(ServiceStatus.Started)) {
-        context.start();
-      }
+    if (previous == null) {
+      PreSortedProducerPickUp pickUpRoute = new PreSortedProducerPickUp(
+          userName, messageType, producerUriFactory, uriFactory);
+      pickUpRoute.addRoutesToCamelContext(teamworkContext);
+
+      ProducerDelivery deliveryRoute = new ProducerDelivery(
+          userName, messageType, producerUriFactory, uriFactory);
+      deliveryRoute.addRoutesToCamelContext(teamworkContext);
+    } else {
+      previous.stop();
     }
-    return context;
+
+    ServiceStatus teamworkContextStatus = teamworkContext.getStatus();
+    if (teamworkContextStatus.equals(ServiceStatus.Started) ||
+        teamworkContextStatus.equals(ServiceStatus.Starting)) {
+      newContextForProducer.start();
+    }
+
+    newContextForProducer.addRoutes(pluginRoute);
   }
 
   static class UserMessageType {

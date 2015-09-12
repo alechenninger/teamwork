@@ -21,11 +21,21 @@ package com.github.alechenninger.teamwork;
 import com.github.alechenninger.teamwork.endpoints.PathBasedUriFactory;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
 import com.github.alechenninger.teamwork.producer.ProducerPlugin;
+import com.github.alechenninger.teamwork.test.ExpressionProducerPlugin;
 import com.github.alechenninger.teamwork.test.NoopProducerPlugin;
+import com.github.alechenninger.teamwork.test.ProducerPluginSupport;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultCamelContextNameStrategy;
+import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,9 +45,10 @@ import java.util.Collections;
 
 @RunWith(JUnit4.class)
 public class TeamworkTest extends CamelTestSupport {
+  private Teamwork teamwork;
+
   private UriFactory uriFactory = new PathBasedUriFactory("direct", Collections.<String, String>emptyMap());
 
-  private Teamwork teamwork;
   private UserName knuth  = new UserName("knuth");
   private MessageType quoteV1 = new MessageType("Quote", Version.v1_0_0());
 
@@ -46,7 +57,7 @@ public class TeamworkTest extends CamelTestSupport {
 
   @Override
   protected void doPostSetup() throws Exception {
-    context.setNameStrategy(new ExplicitCamelContextNameStrategy("Teamwork"));
+    context.setNameStrategy(new DefaultCamelContextNameStrategy("Teamwork"));
     teamwork = new Teamwork(uriFactory, context);
   }
 
@@ -70,6 +81,63 @@ public class TeamworkTest extends CamelTestSupport {
 
     template.sendBody(uriFactory.forDestination(knuth, quoteV1, Destination.PRODUCER),
         "Beware of bugs in the above code; I have only proved it correct, not tried it.");
+
+    toRouter.assertIsSatisfied();
+  }
+
+  @Test
+  public void shouldReplaceAnAlreadyAddedPluginForSameUserAndMessageType() throws Exception {
+    ProducerPlugin noop = new NoopProducerPlugin(Version.v1_0_0(), quoteV1);
+    ProducerPlugin producesConstant = new ExpressionProducerPlugin(Version.v1_0_0(), quoteV1,
+        new ConstantExpression("Premature optimization is the root of all evil."));
+
+    teamwork.addProducerPlugin(knuth, noop);
+    teamwork.addProducerPlugin(knuth, producesConstant);
+
+    toRouter.expectedBodiesReceived("Premature optimization is the root of all evil.");
+
+    template.sendBody(uriFactory.forDestination(knuth, quoteV1, Destination.PRODUCER),
+        "Beware of bugs in the above code; I have only proved it correct, not tried it.");
+
+    toRouter.assertIsSatisfied();
+  }
+
+  @Test
+  public void shouldUsePluginProvidedCamelContext() throws Exception {
+    ProducerPlugin usesBeanInCustomContext = new ProducerPluginSupport(quoteV1, Version.v1_0_0()) {
+      @Override
+      public RoutesBuilder createRoute(final String fromUri, final String toUri) {
+        return new RouteBuilder() {
+          @Override
+          public void configure() throws Exception {
+            from(fromUri)
+                .beanRef("bean")
+                .to(toUri);
+          }
+        };
+      }
+
+      @Override
+      public CamelContext createContext() {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("bean", new Processor() {
+          @Override
+          public void process(Exchange exchange) throws Exception {
+            exchange.getIn().setBody("Processed by bean");
+          }
+        });
+        return new DefaultCamelContext(registry);
+      }
+    };
+
+    teamwork.addProducerPlugin(knuth, usesBeanInCustomContext);
+
+    toRouter.expectedBodiesReceived("Processed by bean");
+
+    template.sendBody(uriFactory.forDestination(knuth, quoteV1, Destination.PRODUCER),
+        "The important thing, once you have enough to eat and a nice house, "
+            + "is what you can do for others, "
+            + "what you can contribute to the enterprise as a whole.");
 
     toRouter.assertIsSatisfied();
   }

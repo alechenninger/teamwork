@@ -16,27 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.alechenninger.teamwork.producer;
+package com.github.alechenninger.teamwork.test;
 
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.Version;
+import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
+public abstract class ProducerPluginSupport implements ProducerPlugin {
+  private final MessageType messageType;
+  private final Version version;
 
-public interface ProducerPlugin {
-  /**
-   * Not version of message type, but version of producer. A message type + version can have
-   * multiple producer implementations per user. For example, you are still producing a "User"
-   * type of version "1", but you have a bug to fix, so you create another producer with the bug
-   * fixed that also handles producing "User" version "1".
-   */
-  // TODO: Does this have to be here? Should it?
-  Version version();
+  protected ProducerPluginSupport(MessageType messageType, Version version) {
+    this.messageType = messageType;
+    this.version = version;
+  }
 
-  MessageType messageType();
+  @Override
+  public Version version() {
+    return version;
+  }
 
-  RoutesBuilder createRoute(String fromUri, String toUri);
-
-  CamelContext createContext();
+  @Override
+  public MessageType messageType() {
+    return messageType;
+  }
 }

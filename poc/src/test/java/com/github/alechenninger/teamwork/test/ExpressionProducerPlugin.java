@@ -23,17 +23,21 @@ import com.github.alechenninger.teamwork.Version;
 import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class NoopProducerPlugin implements ProducerPlugin {
+public class ExpressionProducerPlugin implements ProducerPlugin {
   private final Version version;
   private final MessageType messageType;
+  private final Expression bodyExpression;
 
-  public NoopProducerPlugin(Version version, MessageType messageType) {
+  public ExpressionProducerPlugin(Version version, MessageType messageType, Expression
+      bodyExpression) {
     this.version = version;
     this.messageType = messageType;
+    this.bodyExpression = bodyExpression;
   }
 
   @Override
@@ -52,6 +56,7 @@ public class NoopProducerPlugin implements ProducerPlugin {
       @Override
       public void configure() throws Exception {
         from(fromUri)
+            .setBody(bodyExpression)
             .to(toUri);
       }
     };
