@@ -12,7 +12,7 @@ An integration platform (and team to go with it) could play much the same role C
 
 Of course, at some point, application teams will have to get their hands dirty. They'll have to handle how foreign messages get into their own format, for example. Who else should? If the platform team has to, they'll have to scale to understanding every application that wishes to integrate enough to integrate it. We can do better.
 
-So Teamwork tries to spread the work in a way that makes the most sense. The platform handles the messaging concerns. Application teams provide configuration and business logic based on what they want to produce or consume in the form of plugins, versioned, uploaded and activated at runtime, specific to a versioned message type:
+So Teamwork tries to spread the work in a way that makes the most sense. The platform handles the messaging concerns. Application teams provide configuration and business logic based on what they want to produce or consume in the form of versioned plugins, uploaded and activated at runtime, specific to a versioned message type. There are two types:
 
 1. "Producer plugins" which take messages their team produces of a particular type and returns a valid message to be shared with interested consumers. The platform team provides what "valid" is (say, a canonical data model per the popular EIP), and the messaging endpoints with which producing teams can send messages to.
 2. "Consumer plugins" which take produced and validated messages of a particular type and return a format understandable by their application. Consumers can also provide a separate endpoint for Teamwork to send the resulting message to, as well as "filters" to prevent their plugins from ever seeing messages they don't care about.
