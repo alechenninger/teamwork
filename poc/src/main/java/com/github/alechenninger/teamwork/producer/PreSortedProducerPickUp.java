@@ -24,7 +24,7 @@ public class PreSortedProducerPickUp extends RouteBuilder {
   @Override
   public void configure() throws Exception {
     from(pickUpUriFactory.forDestination(userName, messageType, Destination.PRODUCER))
-        .routeId("producer_pick_up_" + userName + messageType)
+        .routeId("producer_pick_up_" + userName + "_" + messageType)
         // TODO: Throttling, logging, metrics, reporting
         .to(pluginUriFactory.toProducerPlugin(userName, messageType));
 

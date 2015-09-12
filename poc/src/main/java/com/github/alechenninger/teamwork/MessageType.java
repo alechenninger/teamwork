@@ -22,7 +22,7 @@ public final class MessageType {
 
   @Override
   public String toString() {
-    return name + "v" + version;
+    return name + "-v" + version;
   }
 
   @Override

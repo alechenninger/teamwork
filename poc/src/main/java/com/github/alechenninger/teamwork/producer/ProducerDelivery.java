@@ -24,7 +24,7 @@ public class ProducerDelivery extends RouteBuilder {
   @Override
   public void configure() throws Exception {
     from(pluginUriFactory.fromProducerPlugin(userName, messageType))
-        .routeId("producer_delivery_" + userName + messageType)
+        .routeId("producer_delivery_" + userName + "_" + messageType)
         // TODO: logging, metrics, reporting
         .to(uriFactory.forDestination(userName, messageType, Destination.ROUTER));
   }

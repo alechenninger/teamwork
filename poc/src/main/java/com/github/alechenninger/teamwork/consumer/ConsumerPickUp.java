@@ -24,7 +24,7 @@ public class ConsumerPickUp extends RouteBuilder {
   @Override
   public void configure() throws Exception {
     from(pickUpUriFactory.forDestination(userName, messageType, Destination.CONSUMER))
-        .routeId("consumer_pick_up_" + userName + messageType)
+        .routeId("consumer_pick_up_" + userName + "_" + messageType)
         // TODO: logging, metrics, reporting
         .to(pluginUriFactory.toConsumerPlugin(userName, messageType));
   }
