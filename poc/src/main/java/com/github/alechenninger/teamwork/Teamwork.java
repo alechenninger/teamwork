@@ -70,7 +70,7 @@ public class Teamwork {
     CamelContext newContextForProducer = plugin.createContext();
     // TODO: Sanity check new context is empty && not started
     newContextForProducer.setNameStrategy(new DefaultCamelContextNameStrategy(
-        Joiner.on('-').join(userName, "producer", plugin)));
+        Joiner.on('-').join(userName, "producer", messageType)));
 
     UserMessageType userMessageType = new UserMessageType(userName, messageType);
     CamelContext previous = producerContexts.put(userMessageType, newContextForProducer);

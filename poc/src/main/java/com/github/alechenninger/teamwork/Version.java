@@ -73,10 +73,7 @@ public final class Version implements Comparable<Version> {
     int minorDiff = minor() - o.minor();
     if (minorDiff != 0) return minorDiff;
 
-    int patchDiff = patch() - o.patch();
-    if (patchDiff != 0) return patchDiff;
-
-    return 0;
+    return patch() - o.patch();
   }
 
   @Override
