@@ -24,19 +24,17 @@ import com.github.alechenninger.teamwork.Version;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 
+// TODO: Unify ConsumerPlugin and ProducerPlugin interfaces?
 public interface ProducerPlugin {
-  /**
-   * Not version of message type, but version of producer. A message type + version can have
-   * multiple producer implementations per user. For example, you are still producing a "User"
-   * type of version "1", but you have a bug to fix, so you create another producer with the bug
-   * fixed that also handles producing "User" version "1".
-   */
-  // TODO: Does this have to be here? Should it?
-  Version version();
-
   MessageType messageType();
 
-  RoutesBuilder createRoute(String fromUri, String toUri);
-
-  CamelContext createContext();
+  /**
+   * This is how plugins provide functionality: an isolated context which communicates with Teamwork
+   * via supplied URIs. Plugins are expected to add routes and whatever else they need to the
+   * context before returning it. Plugins do not have to start the context (and probably shouldn't).
+   *
+   * @param fromUri The URI this context can expect messages to be sent to from Teamwork.
+   * @param toUri The URI Teamwork expects this context to send processed messages to.
+   */
+  CamelContext createContext(String fromUri, String toUri) throws Exception;
 }

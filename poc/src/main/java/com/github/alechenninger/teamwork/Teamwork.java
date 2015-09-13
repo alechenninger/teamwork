@@ -63,17 +63,16 @@ public class Teamwork {
   public void addProducerPlugin(UserName userName, ProducerPlugin plugin) throws Exception {
     MessageType messageType = plugin.messageType();
 
-    RoutesBuilder pluginRoute = plugin.createRoute(
+    CamelContext newContextForProducer = plugin.createContext(
         producerUriFactory.toProducerPlugin(userName, messageType),
         producerUriFactory.fromProducerPlugin(userName, messageType));
 
-    CamelContext newContextForProducer = plugin.createContext();
-    // TODO: Sanity check new context is empty && not started
     newContextForProducer.setNameStrategy(new DefaultCamelContextNameStrategy(
         Joiner.on('-').join(userName, "producer", messageType)));
 
-    UserMessageType userMessageType = new UserMessageType(userName, messageType);
-    CamelContext previous = producerContexts.put(userMessageType, newContextForProducer);
+    CamelContext previous = producerContexts.put(
+        new UserMessageType(userName, messageType),
+        newContextForProducer);
 
     if (previous == null) {
       PreSortedProducerPickUp pickUpRoute = new PreSortedProducerPickUp(
@@ -92,8 +91,6 @@ public class Teamwork {
         teamworkContextStatus.equals(ServiceStatus.Starting)) {
       newContextForProducer.start();
     }
-
-    newContextForProducer.addRoutes(pluginRoute);
   }
 
   static class UserMessageType {

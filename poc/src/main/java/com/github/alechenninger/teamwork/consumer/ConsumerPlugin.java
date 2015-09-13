@@ -21,12 +21,20 @@ package com.github.alechenninger.teamwork.consumer;
 import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.Version;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 
+// TODO: Unify ConsumerPlugin and ProducerPlugin interfaces?
 public interface ConsumerPlugin {
   MessageType messageType();
 
-  RoutesBuilder route();
-
-  Version version();
+  /**
+   * This is how plugins provide functionality: an isolated context which communicates with Teamwork
+   * via supplied URIs. Plugins are expected to add routes and whatever else they need to the
+   * context before returning it. Plugins do not have to start the context (and probably shouldn't).
+   *
+   * @param fromUri The URI this context can expect messages to be sent to from Teamwork.
+   * @param toUri The URI Teamwork expects this context to send processed messages to.
+   */
+  CamelContext createContext(String fromUri, String toUri);
 }

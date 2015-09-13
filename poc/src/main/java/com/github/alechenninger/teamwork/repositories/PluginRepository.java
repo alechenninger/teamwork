@@ -27,9 +27,9 @@ import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 import java.util.Set;
 
 public interface PluginRepository {
-  void addProducerPlugin(UserName userName, ProducerPlugin plugin);
+  void addProducerPlugin(UserName userName, ProducerPlugin plugin, Version version);
 
-  void addConsumerPlugin(UserName userName, ConsumerPlugin plugin);
+  void addConsumerPlugin(UserName userName, ConsumerPlugin plugin, Version version);
 
   // TODO: May want to return different data structure for these; perhaps map or table
   Set<ProducerPlugin> getProducerPluginsForUser(UserName userName);

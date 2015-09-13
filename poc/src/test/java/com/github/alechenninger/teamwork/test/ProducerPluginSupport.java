@@ -24,16 +24,9 @@ import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 
 public abstract class ProducerPluginSupport implements ProducerPlugin {
   private final MessageType messageType;
-  private final Version version;
 
-  protected ProducerPluginSupport(MessageType messageType, Version version) {
+  protected ProducerPluginSupport(MessageType messageType) {
     this.messageType = messageType;
-    this.version = version;
-  }
-
-  @Override
-  public Version version() {
-    return version;
   }
 
   @Override

@@ -28,17 +28,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class NoopProducerPlugin implements ProducerPlugin {
-  private final Version version;
   private final MessageType messageType;
 
-  public NoopProducerPlugin(Version version, MessageType messageType) {
-    this.version = version;
+  public NoopProducerPlugin(MessageType messageType) {
     this.messageType = messageType;
-  }
-
-  @Override
-  public Version version() {
-    return version;
   }
 
   @Override
@@ -47,18 +40,15 @@ public class NoopProducerPlugin implements ProducerPlugin {
   }
 
   @Override
-  public RoutesBuilder createRoute(final String fromUri, final String toUri) {
-    return new RouteBuilder() {
+  public CamelContext createContext(final String fromUri, final String toUri) throws Exception {
+    CamelContext context = new DefaultCamelContext();
+    new RouteBuilder() {
       @Override
       public void configure() throws Exception {
         from(fromUri)
             .to(toUri);
       }
-    };
-  }
-
-  @Override
-  public CamelContext createContext() {
-    return new DefaultCamelContext();
+    }.addRoutesToCamelContext(context);
+    return context;
   }
 }

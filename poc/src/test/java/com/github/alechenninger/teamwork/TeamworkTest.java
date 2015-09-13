@@ -72,7 +72,7 @@ public class TeamworkTest extends CamelTestSupport {
 
   @Test
   public void shouldAllowAddingAProducerPluginWhichReceivesMessagesByUserAndTypeAndSendsToRouter() throws Exception {
-    ProducerPlugin plugin = new NoopProducerPlugin(Version.v1_0_0(), quoteV1);
+    ProducerPlugin plugin = new NoopProducerPlugin(quoteV1);
 
     teamwork.addProducerPlugin(knuth, plugin);
 
@@ -87,7 +87,7 @@ public class TeamworkTest extends CamelTestSupport {
 
   @Test
   public void shouldReplaceAnAlreadyAddedPluginForSameUserAndMessageType() throws Exception {
-    ProducerPlugin noop = new NoopProducerPlugin(Version.v1_0_0(), quoteV1);
+    ProducerPlugin noop = new NoopProducerPlugin(quoteV1);
     ProducerPlugin producesConstant = new ExpressionProducerPlugin(Version.v1_0_0(), quoteV1,
         new ConstantExpression("Premature optimization is the root of all evil."));
 
@@ -104,21 +104,9 @@ public class TeamworkTest extends CamelTestSupport {
 
   @Test
   public void shouldUsePluginProvidedCamelContext() throws Exception {
-    ProducerPlugin usesBeanInCustomContext = new ProducerPluginSupport(quoteV1, Version.v1_0_0()) {
+    ProducerPlugin usesBeanInCustomContext = new ProducerPluginSupport(quoteV1) {
       @Override
-      public RoutesBuilder createRoute(final String fromUri, final String toUri) {
-        return new RouteBuilder() {
-          @Override
-          public void configure() throws Exception {
-            from(fromUri)
-                .beanRef("bean")
-                .to(toUri);
-          }
-        };
-      }
-
-      @Override
-      public CamelContext createContext() {
+      public CamelContext createContext(final String fromUri, final String toUri) throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("bean", new Processor() {
           @Override
@@ -126,7 +114,19 @@ public class TeamworkTest extends CamelTestSupport {
             exchange.getIn().setBody("Processed by bean");
           }
         });
-        return new DefaultCamelContext(registry);
+
+        CamelContext context = new DefaultCamelContext(registry);
+
+        new RouteBuilder() {
+          @Override
+          public void configure() throws Exception {
+            from(fromUri)
+                .beanRef("bean")
+                .to(toUri);
+          }
+        }.addRoutesToCamelContext(context);
+
+        return context;
       }
     };
 

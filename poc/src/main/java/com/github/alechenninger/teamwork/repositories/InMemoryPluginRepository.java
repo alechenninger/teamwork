@@ -40,13 +40,13 @@ public class InMemoryPluginRepository implements PluginRepository {
   private final Table<UserName, TypeAndVersion, ConsumerPlugin> consumerPlugins = HashBasedTable.create();
 
   @Override
-  public void addProducerPlugin(UserName userName, ProducerPlugin plugin) {
-    producerPlugins.put(userName, TypeAndVersion.fromPlugin(plugin), plugin);
+  public void addProducerPlugin(UserName userName, ProducerPlugin plugin, Version version) {
+    producerPlugins.put(userName, new TypeAndVersion(plugin.messageType(), version), plugin);
   }
 
   @Override
-  public void addConsumerPlugin(UserName userName, ConsumerPlugin plugin) {
-    consumerPlugins.put(userName, TypeAndVersion.fromPlugin(plugin), plugin);
+  public void addConsumerPlugin(UserName userName, ConsumerPlugin plugin, Version version) {
+    consumerPlugins.put(userName, new TypeAndVersion(plugin.messageType(), version), plugin);
   }
 
   @Override
@@ -73,14 +73,6 @@ public class InMemoryPluginRepository implements PluginRepository {
   static class TypeAndVersion {
     final MessageType type;
     final Version version;
-
-    static TypeAndVersion fromPlugin(ProducerPlugin plugin) {
-      return new TypeAndVersion(plugin.messageType(), plugin.version());
-    }
-
-    static TypeAndVersion fromPlugin(ConsumerPlugin plugin) {
-      return new TypeAndVersion(plugin.messageType(), plugin.version());
-    }
 
     TypeAndVersion(MessageType type, Version version) {
       this.type = type;
