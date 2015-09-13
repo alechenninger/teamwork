@@ -19,7 +19,6 @@
 package com.github.alechenninger.teamwork.test;
 
 import com.github.alechenninger.teamwork.MessageType;
-import com.github.alechenninger.teamwork.Version;
 import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 
 import org.apache.camel.CamelContext;
@@ -28,13 +27,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class ExpressionProducerPlugin implements ProducerPlugin {
-  private final Version version;
   private final MessageType messageType;
   private final Expression bodyExpression;
 
-  public ExpressionProducerPlugin(Version version, MessageType messageType, Expression
-      bodyExpression) {
-    this.version = version;
+  public ExpressionProducerPlugin(MessageType messageType, Expression bodyExpression) {
     this.messageType = messageType;
     this.bodyExpression = bodyExpression;
   }

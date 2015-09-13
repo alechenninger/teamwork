@@ -29,7 +29,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -44,7 +43,7 @@ import org.junit.runners.JUnit4;
 import java.util.Collections;
 
 @RunWith(JUnit4.class)
-public class TeamworkTest extends CamelTestSupport {
+public class AddPluginTest extends CamelTestSupport {
   private Teamwork teamwork;
 
   private UriFactory uriFactory = new PathBasedUriFactory("direct", Collections.<String, String>emptyMap());
@@ -71,7 +70,7 @@ public class TeamworkTest extends CamelTestSupport {
   }
 
   @Test
-  public void shouldAllowAddingAProducerPluginWhichReceivesMessagesByUserAndTypeAndSendsToRouter() throws Exception {
+  public void shouldAddProducerPluginWhichReceivesMessagesByUserAndTypeAndSendsToRouter() throws Exception {
     ProducerPlugin plugin = new NoopProducerPlugin(quoteV1);
 
     teamwork.addProducerPlugin(knuth, plugin);
@@ -88,7 +87,7 @@ public class TeamworkTest extends CamelTestSupport {
   @Test
   public void shouldReplaceAnAlreadyAddedPluginForSameUserAndMessageType() throws Exception {
     ProducerPlugin noop = new NoopProducerPlugin(quoteV1);
-    ProducerPlugin producesConstant = new ExpressionProducerPlugin(Version.v1_0_0(), quoteV1,
+    ProducerPlugin producesConstant = new ExpressionProducerPlugin(quoteV1,
         new ConstantExpression("Premature optimization is the root of all evil."));
 
     teamwork.addProducerPlugin(knuth, noop);

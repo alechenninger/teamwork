@@ -30,7 +30,6 @@ import com.github.alechenninger.teamwork.producer.ProducerPluginUriFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 
@@ -60,8 +59,10 @@ public class Teamwork {
             Iterables.concat(producerContexts.values(), consumerContexts.values())));
   }
 
-  public void addProducerPlugin(UserName userName, ProducerPlugin plugin) throws Exception {
+  public synchronized void addProducerPlugin(UserName userName, ProducerPlugin plugin) throws Exception {
     MessageType messageType = plugin.messageType();
+
+    // TODO: Handle failure scenarios
 
     CamelContext newContextForProducer = plugin.createContext(
         producerUriFactory.toProducerPlugin(userName, messageType),

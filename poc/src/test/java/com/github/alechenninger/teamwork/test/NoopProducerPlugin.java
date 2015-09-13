@@ -19,11 +19,9 @@
 package com.github.alechenninger.teamwork.test;
 
 import com.github.alechenninger.teamwork.MessageType;
-import com.github.alechenninger.teamwork.Version;
 import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 

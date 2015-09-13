@@ -19,7 +19,6 @@
 package com.github.alechenninger.teamwork.test;
 
 import com.github.alechenninger.teamwork.MessageType;
-import com.github.alechenninger.teamwork.Version;
 import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 
 public abstract class ProducerPluginSupport implements ProducerPlugin {

@@ -36,5 +36,7 @@ public interface ProducerPlugin {
    * @param fromUri The URI this context can expect messages to be sent to from Teamwork.
    * @param toUri The URI Teamwork expects this context to send processed messages to.
    */
+  // TODO: Provide "environment variables" of some kind
+  // So plugins can be decoupled from configuration
   CamelContext createContext(String fromUri, String toUri) throws Exception;
 }
