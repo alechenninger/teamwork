@@ -16,27 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.alechenninger.teamwork;
+package com.github.alechenninger.teamwork.router;
 
-/**
- * The four core destinations a message is persisted. Each is named after where the message is being
- * sent <em>to</em>.
- */
-// TODO: Maybe should not be an enum?
-public enum Destination {
-  PRODUCER("producer"),
-  ROUTER("router"),
-  CONSUMER("consumer"),
-  APPLICATION("application"); // TODO: Better name?
+import com.github.alechenninger.teamwork.RemovableRoutesBuilder;
 
-  private final String name;
+import org.apache.camel.Predicate;
 
-  Destination(String name) {
-    this.name = name;
-  }
-
-  @Override
-  public String toString() {
-    return name;
-  }
+public interface ProducerFilter extends RemovableRoutesBuilder {
+  void filterProducer(Predicate filter);
 }

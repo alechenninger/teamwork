@@ -44,7 +44,7 @@ import java.util.Collections;
 
 @RunWith(JUnit4.class)
 public class AddPluginTest extends CamelTestSupport {
-  private Teamwork teamwork;
+  private TeamworkApi teamwork;
 
   private UriFactory uriFactory = new PathBasedUriFactory("direct", Collections.<String, String>emptyMap());
 

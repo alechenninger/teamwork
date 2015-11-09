@@ -44,7 +44,7 @@ public class ContextLifecycleTest {
   private UserName userName = new UserName("user");
   private MessageType messageType = new MessageType("messageType", Version.v1_0_0());
 
-  private Teamwork teamwork = new Teamwork(uriFactory, teamworkContext);
+  private TeamworkApi teamwork = new Teamwork(uriFactory, teamworkContext);
 
   private ProducerPlugin plugin = new ProducerPluginSupport(messageType) {
     @Override

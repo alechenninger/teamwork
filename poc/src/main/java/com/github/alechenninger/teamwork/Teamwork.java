@@ -26,10 +26,17 @@ import com.github.alechenninger.teamwork.producer.PreSortedProducerPickUp;
 import com.github.alechenninger.teamwork.producer.ProducerDelivery;
 import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 import com.github.alechenninger.teamwork.producer.ProducerPluginUriFactory;
+import com.github.alechenninger.teamwork.router.ProducerFilter;
+import com.github.alechenninger.teamwork.router.CanonicalRouter;
+import com.github.alechenninger.teamwork.router.CanonicalRouterRoute;
+import com.github.alechenninger.teamwork.router.CanonicalTopicUriFactory;
+import com.github.alechenninger.teamwork.router.DirectCanonicalTopicUriFactory;
+import com.github.alechenninger.teamwork.router.ProducerFilterRoute;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Predicate;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 
@@ -37,8 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-// TODO: This API should be an interface
-public class Teamwork {
+public class Teamwork implements TeamworkApi {
   private final CamelContext teamworkContext;
   // TODO: Need to be more flexible about uri's (multicast to multiple routers, send to different application endpoints...)
   private final UriFactory uriFactory;
@@ -46,9 +52,13 @@ public class Teamwork {
   private final Map<UserMessageType, CamelContext> producerContexts = new HashMap<>();
   private final Map<UserMessageType, CamelContext> consumerContexts = new HashMap<>();
 
-  // TODO: Inject this or maybe handle some other way
+  private final Map<UserMessageType, ProducerFilter> producerFilters = new HashMap<>();
+  private final Map<MessageType, CanonicalRouter> routers = new HashMap<>();
+
+  // TODO: Inject these or maybe handle some other way
   private final ProducerPluginUriFactory producerUriFactory = new DirectVmProducerPluginUriFactory();
   private final ConsumerPluginUriFactory consumerUriFactory = new DirectVmConsumerPluginUriFactory();
+  private final CanonicalTopicUriFactory canonicalTopicUriFactory = new DirectCanonicalTopicUriFactory();
 
   public Teamwork(UriFactory uriFactory, CamelContext teamworkContext) {
     this.uriFactory = Objects.requireNonNull(uriFactory, "uriFactory");
@@ -59,6 +69,8 @@ public class Teamwork {
             Iterables.concat(producerContexts.values(), consumerContexts.values())));
   }
 
+  @Override
+  // TODO: use more specific synchronization primitive instead of method level
   public synchronized void addProducerPlugin(UserName userName, ProducerPlugin plugin) throws Exception {
     MessageType messageType = plugin.messageType();
 
@@ -94,7 +106,55 @@ public class Teamwork {
     }
   }
 
-  static class UserMessageType {
+  @Override
+  public synchronized void addRouter(MessageType messageType, Predicate validator) throws Exception {
+    CanonicalRouter current = routers.get(messageType);
+
+    if (current == null) {
+      CanonicalRouter router = new CanonicalRouterRoute(messageType, validator,
+          canonicalTopicUriFactory, uriFactory);
+      router.addRoutesToCamelContext(teamworkContext);
+      routers.put(messageType, router);
+    } else {
+      current.useValidator(validator);
+    }
+  }
+
+  @Override
+  public synchronized void filterProducer(UserName userName, MessageType messageType,
+      Predicate filter) throws Exception {
+    if (!routers.containsKey(messageType)) {
+      throw new IllegalStateException("Must add a router for this message type before filtering a "
+          + "producer.");
+    }
+
+    UserMessageType userMessageType = new UserMessageType(userName, messageType);
+    ProducerFilter current = producerFilters.get(userMessageType);
+
+    if (current == null) {
+      ProducerFilter filterRoute = new ProducerFilterRoute(userName, messageType, filter,
+          uriFactory, canonicalTopicUriFactory);
+      filterRoute.addRoutesToCamelContext(teamworkContext);
+      producerFilters.put(userMessageType, filterRoute);
+    } else {
+      current.filterProducer(filter);
+    }
+  }
+
+  @Override
+  public synchronized void filterConsumer(UserName userName, MessageType messageType,
+      Predicate filter) {
+    CanonicalRouter router = routers.get(messageType);
+
+    if (router == null) {
+      throw new IllegalStateException("Must add a router for this message type before filtering a "
+          + "consumer.");
+    }
+
+    router.filterConsumer(userName, filter);
+  }
+
+  private static class UserMessageType {
     final UserName userName;
     final MessageType messageType;
 

@@ -23,20 +23,23 @@ import com.github.alechenninger.teamwork.UserName;
 import com.github.alechenninger.teamwork.Destination;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 
 // Per user per type
-public class CanonicalProducer extends RouteBuilder {
-  private final UriFactory hubUri;
+public class ProducerFilterRoute extends RouteBuilder implements ProducerFilter {
+  private final UriFactory uriFactory;
   private final UserName userName;
   private final MessageType messageType;
   private final CanonicalTopicUriFactory canonicalTopic;
-  private final Predicate producerFilter;
 
-  public CanonicalProducer(UserName userName, MessageType messageType, Predicate producerFilter,
-      UriFactory hubUri, CanonicalTopicUriFactory canonicalTopic) {
-    this.hubUri = hubUri;
+  private Predicate producerFilter;
+
+  public ProducerFilterRoute(UserName userName, MessageType messageType, Predicate producerFilter,
+      UriFactory uriFactory, CanonicalTopicUriFactory canonicalTopic) {
+    this.uriFactory = uriFactory;
     this.userName = userName;
     this.messageType = messageType;
     this.canonicalTopic = canonicalTopic;
@@ -44,16 +47,34 @@ public class CanonicalProducer extends RouteBuilder {
   }
 
   @Override
+  public void filterProducer(Predicate filter) {
+    producerFilter = filter;
+  }
+
+  @Override
   public void configure() throws Exception {
-    from(hubUri.forDestination(userName, messageType, Destination.ROUTER))
+    from(uriFactory.forDestination(userName, messageType, Destination.ROUTER))
+        .routeId(routeId())
         .choice()
-          .when(passesFilter())
+          // TODO: Should allow filters to say why they didn't pass a la Hamcrest matcher describeMismatch
+          // Similar to router, wrap in closure to pickup changes in filter
+          .when(new Predicate() {
+            @Override
+            public boolean matches(Exchange exchange) {
+              return producerFilter.matches(exchange);
+            }
+          })
           .to(canonicalTopic.forMessageType(messageType))
         .otherwise()
           .log("Message filtered from being produced by " + userName);
   }
 
-  private Predicate passesFilter() {
-    return producerFilter;
+  @Override
+  public void removeRoutesFromCamelContext(CamelContext context) throws Exception {
+    context.removeRoute(routeId());
+  }
+
+  private String routeId() {
+    return "teamwork-canonical-producer:" + userName + messageType;
   }
 }

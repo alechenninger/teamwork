@@ -18,25 +18,9 @@
 
 package com.github.alechenninger.teamwork;
 
-/**
- * The four core destinations a message is persisted. Each is named after where the message is being
- * sent <em>to</em>.
- */
-// TODO: Maybe should not be an enum?
-public enum Destination {
-  PRODUCER("producer"),
-  ROUTER("router"),
-  CONSUMER("consumer"),
-  APPLICATION("application"); // TODO: Better name?
+import org.apache.camel.CamelContext;
+import org.apache.camel.RoutesBuilder;
 
-  private final String name;
-
-  Destination(String name) {
-    this.name = name;
-  }
-
-  @Override
-  public String toString() {
-    return name;
-  }
+public interface RemovableRoutesBuilder extends RoutesBuilder {
+  void removeRoutesFromCamelContext(CamelContext context) throws Exception;
 }

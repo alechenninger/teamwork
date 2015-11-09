@@ -18,25 +18,17 @@
 
 package com.github.alechenninger.teamwork;
 
-/**
- * The four core destinations a message is persisted. Each is named after where the message is being
- * sent <em>to</em>.
- */
-// TODO: Maybe should not be an enum?
-public enum Destination {
-  PRODUCER("producer"),
-  ROUTER("router"),
-  CONSUMER("consumer"),
-  APPLICATION("application"); // TODO: Better name?
+import com.github.alechenninger.teamwork.producer.ProducerPlugin;
 
-  private final String name;
+import org.apache.camel.Predicate;
 
-  Destination(String name) {
-    this.name = name;
-  }
+public interface TeamworkApi {
+  void addProducerPlugin(UserName userName, ProducerPlugin plugin) throws Exception;
 
-  @Override
-  public String toString() {
-    return name;
-  }
+  void addRouter(MessageType messageType, Predicate validator) throws Exception;
+
+  // TODO: These APIs don't fit super nicely here... require route to be present
+  void filterProducer(UserName userName, MessageType messageType, Predicate filter) throws Exception;
+
+  void filterConsumer(UserName userName, MessageType messageType, Predicate filter);
 }

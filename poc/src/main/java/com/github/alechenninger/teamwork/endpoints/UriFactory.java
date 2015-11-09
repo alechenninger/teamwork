@@ -23,5 +23,7 @@ import com.github.alechenninger.teamwork.MessageType;
 import com.github.alechenninger.teamwork.UserName;
 
 public interface UriFactory {
+  // TODO: Worth distinguishing between sending-to URIs vs reading-from URIs?
+  // They tend to have differing options
   String forDestination(UserName userName, MessageType messageType, Destination destination);
 }

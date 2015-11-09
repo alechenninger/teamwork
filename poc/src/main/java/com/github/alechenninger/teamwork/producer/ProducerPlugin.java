@@ -25,6 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 
 // TODO: Unify ConsumerPlugin and ProducerPlugin interfaces?
+// Consider also plugins in separate processes. Do these also need their own camel contexts?
+// Or could we instead make plugin more generic: provide us with endpoints and lifecycle hooks?
 public interface ProducerPlugin {
   MessageType messageType();
 

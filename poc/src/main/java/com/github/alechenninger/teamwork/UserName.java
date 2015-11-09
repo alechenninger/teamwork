@@ -52,12 +52,13 @@ public final class UserName implements Serializable, Comparable<String>, CharSeq
   }
 
   @Override
+  @Nonnull
   public String toString() {
     return userName;
   }
 
   @Override
-  public int compareTo(String o) {
+  public int compareTo(@Nonnull String o) {
     return userName.compareTo(o);
   }
 
