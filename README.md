@@ -20,8 +20,8 @@ writing implementations of EIPs but in the scale of organizations: empower appli
 integrate without the potentially debilitating requirements of a low-level integration skillset and
 time to exercise it. Sure, it'd be great if everyone had these things. But time is an obvious hot
 commodity, and not everyone cares to learn these topics. The applications are mostly what they care
-about. And the inversely, some mostly care about the integration platform. There are plenty of
-problems to go around, no need for everyone to solve all of them!
+about. And inversely, some mostly care about the integration platform. There are plenty of problems
+to go around; no need for everyone to solve all of them!
 
 Of course, at some point, application teams will have to get their hands dirty. They'll have to
 handle how foreign messages get into their own format, for example. Who else should? If the platform
