@@ -22,8 +22,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 
 import com.github.alechenninger.teamwork.endpoints.PathBasedUriFactory;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
-import com.github.alechenninger.teamwork.router.CanonicalTopicUriFactory;
-import com.github.alechenninger.teamwork.router.DirectCanonicalTopicUriFactory;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
@@ -32,7 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.processor.validation.PredicateValidationException;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -70,10 +67,10 @@ public class AddRouterTest extends CamelTestSupport {
 
   @Test
   public void shouldRouteProducedMessagesForMessageTypeToAllowedConsumers() throws Exception {
-    teamwork.addRouter(quoteV1, PredicateBuilder.constant(true));
+    Router router = teamwork.addRouter(quoteV1, PredicateBuilder.constant(true));
 
-    teamwork.filterProducer(knuth, quoteV1, PredicateBuilder.constant(true));
-    teamwork.filterConsumer(dijkstra, quoteV1, PredicateBuilder.constant(true));
+    router.filterProducer(knuth, PredicateBuilder.constant(true));
+    router.filterConsumer(dijkstra, PredicateBuilder.constant(true));
 
     toConsumer.expectedBodiesReceived("I can’t be as confident about computer science as I can "
         + "about biology. Biology easily has 500 years of exciting problems to work on. It’s at "
@@ -88,10 +85,10 @@ public class AddRouterTest extends CamelTestSupport {
 
   @Test
   public void shouldFilterOutProducedMessagesNotAllowedToRouter() throws Exception {
-    teamwork.addRouter(quoteV1, PredicateBuilder.constant(true));
+    Router router = teamwork.addRouter(quoteV1, PredicateBuilder.constant(true));
 
-    teamwork.filterProducer(knuth, quoteV1, PredicateBuilder.constant(false));
-    teamwork.filterConsumer(dijkstra, quoteV1, PredicateBuilder.constant(true));
+    router.filterProducer(knuth, PredicateBuilder.constant(false));
+    router.filterConsumer(dijkstra, PredicateBuilder.constant(true));
 
     toConsumer.expectedMessageCount(0);
 
@@ -104,10 +101,10 @@ public class AddRouterTest extends CamelTestSupport {
 
   @Test
   public void shouldNotRouteInvalidMessagesToConsumers() throws Exception {
-    teamwork.addRouter(quoteV1, PredicateBuilder.constant(false));
+    Router router = teamwork.addRouter(quoteV1, PredicateBuilder.constant(false));
 
-    teamwork.filterProducer(knuth, quoteV1, PredicateBuilder.constant(true));
-    teamwork.filterConsumer(dijkstra, quoteV1, PredicateBuilder.constant(true));
+    router.filterProducer(knuth, PredicateBuilder.constant(true));
+    router.filterConsumer(dijkstra, PredicateBuilder.constant(true));
 
     toConsumer.expectedMessageCount(0);
 
@@ -125,10 +122,10 @@ public class AddRouterTest extends CamelTestSupport {
 
   @Test
   public void shouldNotRouteValidMessagesToFilteredOutConsumers() throws Exception {
-    teamwork.addRouter(quoteV1, PredicateBuilder.constant(true));
+    Router router = teamwork.addRouter(quoteV1, PredicateBuilder.constant(true));
 
-    teamwork.filterProducer(knuth, quoteV1, PredicateBuilder.constant(true));
-    teamwork.filterConsumer(dijkstra, quoteV1, PredicateBuilder.constant(false));
+    router.filterProducer(knuth, PredicateBuilder.constant(true));
+    router.filterConsumer(dijkstra, PredicateBuilder.constant(false));
 
     toConsumer.expectedMessageCount(0);
 

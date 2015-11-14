@@ -19,6 +19,7 @@
 package com.github.alechenninger.teamwork.router;
 
 import com.github.alechenninger.teamwork.MessageType;
+import com.github.alechenninger.teamwork.RemovableRoutesBuilder;
 import com.github.alechenninger.teamwork.UserName;
 import com.github.alechenninger.teamwork.Destination;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
@@ -37,28 +38,26 @@ import java.util.Objects;
 import java.util.Set;
 
 // Per type
-public final class CanonicalRouterRoute extends RouteBuilder implements CanonicalRouter {
-  private final CanonicalTopicUriFactory canonicalTopic; // factory... could be String uri
+public final class RouterRoute extends RouteBuilder implements RemovableRoutesBuilder {
+  private final RouterUriFactory canonicalTopic; // factory... could be String uri
   private final Map<UserName, Predicate> userConsumerFilters = new HashMap<>();
   private final UriFactory uriFactory;
   private final MessageType messageType;
 
   private Predicate canonicalValidator;
 
-  public CanonicalRouterRoute(MessageType messageType, Predicate canonicalValidator,
-      CanonicalTopicUriFactory canonicalTopic, UriFactory uriFactory) {
+  public RouterRoute(MessageType messageType, Predicate canonicalValidator,
+      RouterUriFactory canonicalTopic, UriFactory uriFactory) {
     this.canonicalTopic = canonicalTopic;
     this.canonicalValidator = canonicalValidator;
     this.uriFactory = uriFactory;
     this.messageType = messageType;
   }
 
-  @Override
   public void useValidator(Predicate validator) {
     canonicalValidator = validator;
   }
 
-  @Override
   public void filterConsumer(UserName userName, Predicate filter) {
     userConsumerFilters.put(
         Objects.requireNonNull(userName, "userName"),

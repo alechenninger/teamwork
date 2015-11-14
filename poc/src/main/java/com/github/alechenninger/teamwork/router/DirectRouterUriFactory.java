@@ -20,6 +20,9 @@ package com.github.alechenninger.teamwork.router;
 
 import com.github.alechenninger.teamwork.MessageType;
 
-public interface CanonicalTopicUriFactory {
-  String forMessageType(MessageType messageType);
+public final class DirectRouterUriFactory implements RouterUriFactory {
+  @Override
+  public String forMessageType(MessageType messageType) {
+    return "direct:" + messageType;
+  }
 }

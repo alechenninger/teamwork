@@ -16,14 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.alechenninger.teamwork.router;
-
-import com.github.alechenninger.teamwork.RemovableRoutesBuilder;
-import com.github.alechenninger.teamwork.UserName;
+package com.github.alechenninger.teamwork;
 
 import org.apache.camel.Predicate;
 
-public interface CanonicalRouter extends RemovableRoutesBuilder {
+public interface Router {
   void useValidator(Predicate validator);
   void filterConsumer(UserName userName, Predicate filter);
+  void filterProducer(UserName userName, Predicate filter) throws Exception;
 }

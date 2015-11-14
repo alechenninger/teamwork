@@ -25,10 +25,7 @@ import org.apache.camel.Predicate;
 public interface TeamworkApi {
   void addProducerPlugin(UserName userName, ProducerPlugin plugin) throws Exception;
 
-  void addRouter(MessageType messageType, Predicate validator) throws Exception;
+  Router addRouter(MessageType messageType, Predicate validator) throws Exception;
 
-  // TODO: These APIs don't fit super nicely here... require route to be present
-  void filterProducer(UserName userName, MessageType messageType, Predicate filter) throws Exception;
-
-  void filterConsumer(UserName userName, MessageType messageType, Predicate filter);
+  Router getRouter(MessageType messageType);
 }

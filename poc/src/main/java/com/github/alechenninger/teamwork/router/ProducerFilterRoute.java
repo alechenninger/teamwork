@@ -33,12 +33,12 @@ public class ProducerFilterRoute extends RouteBuilder implements ProducerFilter 
   private final UriFactory uriFactory;
   private final UserName userName;
   private final MessageType messageType;
-  private final CanonicalTopicUriFactory canonicalTopic;
+  private final RouterUriFactory canonicalTopic;
 
   private Predicate producerFilter;
 
   public ProducerFilterRoute(UserName userName, MessageType messageType, Predicate producerFilter,
-      UriFactory uriFactory, CanonicalTopicUriFactory canonicalTopic) {
+      UriFactory uriFactory, RouterUriFactory canonicalTopic) {
     this.uriFactory = uriFactory;
     this.userName = userName;
     this.messageType = messageType;
