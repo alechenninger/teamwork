@@ -54,7 +54,6 @@ public class Teamwork implements TeamworkApi {
   // TODO: Inject these or maybe handle some other way
   private final ProducerPluginUriFactory producerUriFactory = new DirectVmProducerPluginUriFactory();
   private final ConsumerPluginUriFactory consumerUriFactory = new DirectVmConsumerPluginUriFactory();
-  private final RouterUriFactory routerUriFactory = new DirectRouterUriFactory();
 
   public Teamwork(UriFactory uriFactory, CamelContext teamworkContext) {
     this.uriFactory = Objects.requireNonNull(uriFactory, "uriFactory");
@@ -109,8 +108,7 @@ public class Teamwork implements TeamworkApi {
       throw new IllegalArgumentException("Router already exists for message type: " + messageType);
     }
 
-    Router router = new TeamworkRouter(messageType, validator, teamworkContext, uriFactory,
-        routerUriFactory);
+    Router router = new TeamworkRouter(messageType, validator, teamworkContext, uriFactory);
 
     routers.put(messageType, router);
 

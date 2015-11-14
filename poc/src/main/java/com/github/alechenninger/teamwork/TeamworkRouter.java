@@ -19,6 +19,7 @@
 package com.github.alechenninger.teamwork;
 
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
+import com.github.alechenninger.teamwork.router.DirectRouterUriFactory;
 import com.github.alechenninger.teamwork.router.RouterUriFactory;
 import com.github.alechenninger.teamwork.router.ProducerFilter;
 import com.github.alechenninger.teamwork.router.ProducerFilterRoute;
@@ -33,18 +34,19 @@ import java.util.Map;
 public class TeamworkRouter implements Router {
   private final MessageType messageType;
   private final RouterRoute routerRoute;
-  private final Map<UserMessageType, ProducerFilter> producerFilters = new HashMap<>();
   private final CamelContext teamworkContext;
   private final UriFactory uriFactory;
-  private final RouterUriFactory routerUriFactory;
+  private final Map<UserMessageType, ProducerFilter> producerFilters = new HashMap<>();
+
+  // TODO: Consider injecting this or something else?
+  private final RouterUriFactory routerUriFactory = new DirectRouterUriFactory();
 
   public TeamworkRouter(MessageType messageType, Predicate validator, CamelContext teamworkContext,
-      UriFactory uriFactory, RouterUriFactory routerUriFactory) throws Exception {
+      UriFactory uriFactory) throws Exception {
     this.messageType = messageType;
     this.routerRoute = new RouterRoute(messageType, validator, routerUriFactory, uriFactory);
     this.teamworkContext = teamworkContext;
     this.uriFactory = uriFactory;
-    this.routerUriFactory = routerUriFactory;
 
     routerRoute.addRoutesToCamelContext(teamworkContext);
   }
