@@ -33,16 +33,16 @@ public class ProducerFilterRoute extends RouteBuilder implements ProducerFilter 
   private final UriFactory uriFactory;
   private final UserName userName;
   private final MessageType messageType;
-  private final RouterUriFactory canonicalTopic;
+  private final RouterUriFactory routerUriFactory;
 
   private Predicate producerFilter;
 
   public ProducerFilterRoute(UserName userName, MessageType messageType, Predicate producerFilter,
-      UriFactory uriFactory, RouterUriFactory canonicalTopic) {
+      UriFactory uriFactory, RouterUriFactory routerUriFactory) {
     this.uriFactory = uriFactory;
     this.userName = userName;
     this.messageType = messageType;
-    this.canonicalTopic = canonicalTopic;
+    this.routerUriFactory = routerUriFactory;
     this.producerFilter = producerFilter;
   }
 
@@ -64,7 +64,7 @@ public class ProducerFilterRoute extends RouteBuilder implements ProducerFilter 
               return producerFilter.matches(exchange);
             }
           })
-          .to(canonicalTopic.forMessageType(messageType))
+          .to(routerUriFactory.forMessageType(messageType))
         .otherwise()
           .log("Message filtered from being produced by " + userName);
   }

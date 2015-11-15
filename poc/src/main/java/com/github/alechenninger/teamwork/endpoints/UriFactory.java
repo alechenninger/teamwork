@@ -25,5 +25,9 @@ import com.github.alechenninger.teamwork.UserName;
 public interface UriFactory {
   // TODO: Worth distinguishing between sending-to URIs vs reading-from URIs?
   // They tend to have differing options
+  // API could be fromDestination(...) and toDestination(...)
+  // TODO: May want to flip this API around: let the destination define the signature.
+  // A "message sorter" destination, for instance, may only be a function of user, not message type,
+  // since if you already knew the message type, you wouldn't need to sort :).
   String forDestination(UserName userName, MessageType messageType, Destination destination);
 }
