@@ -58,12 +58,7 @@ public class ProducerFilterRoute extends RouteBuilder implements ProducerFilter 
         .choice()
           // TODO: Should allow filters to say why they didn't pass a la Hamcrest matcher describeMismatch
           // Similar to router, wrap in closure to pickup changes in filter
-          .when(new Predicate() {
-            @Override
-            public boolean matches(Exchange exchange) {
-              return producerFilter.matches(exchange);
-            }
-          })
+          .when(exchange -> producerFilter.matches(exchange))
           .to(routerUriFactory.forMessageType(messageType))
         .otherwise()
           .log("Message filtered from being produced by " + userName);
