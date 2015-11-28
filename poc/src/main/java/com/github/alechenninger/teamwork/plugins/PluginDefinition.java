@@ -18,7 +18,7 @@
 
 package com.github.alechenninger.teamwork.plugins;
 
-public interface PluginDefinition/*Definition?*/ {
+public interface PluginDefinition {
   /**
    * Used to a identify a plugin for a number of usages such as selecting a specific plugin among
    * several in the same artifact.

@@ -55,11 +55,11 @@ public class AsyncCamelPluginTest extends CamelTestSupport {
     }
   };
 
-  private CamelPlugin plugin;
+  private CamelContextProcessor plugin;
 
   @Override
   protected void doPostSetup() throws Exception {
-    plugin = new CamelPlugin(asyncPluginDefinition, context);
+    plugin = new CamelContextProcessor(asyncPluginDefinition);
     plugin.start();
   }
 
@@ -70,12 +70,12 @@ public class AsyncCamelPluginTest extends CamelTestSupport {
 
   @Test
   public void testAsyncReply() throws Exception {
-    Exchange source = createExchangeWithBody("foo");
-    Exchange result = plugin.apply(source);
-    if (result.hasOut()) {
-      assertEquals("reply", result.getOut().getBody());
+    Exchange exchange = createExchangeWithBody("foo");
+    plugin.process(exchange);
+    if (exchange.hasOut()) {
+      assertEquals("reply", exchange.getOut().getBody());
     } else {
-      assertEquals("reply", result.getIn().getBody());
+      assertEquals("reply", exchange.getIn().getBody());
     }
   }
 }

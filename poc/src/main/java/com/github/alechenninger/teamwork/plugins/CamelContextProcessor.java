@@ -21,31 +21,30 @@ package com.github.alechenninger.teamwork.plugins;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.support.ServiceSupport;
 
-public final class CamelPlugin implements Plugin, RequiresStart, RequiresStop {
+public final class CamelContextProcessor extends ServiceSupport implements Processor {
   private final CamelContext pluginContext;
   private final Producer toPlugin;
 
-  public CamelPlugin(CamelPluginDefinition pluginDefinition, CamelContext teamworkContext)
+  public CamelContextProcessor(CamelPluginDefinition pluginDefinition)
       throws Exception {
-    // TODO: Allow multiple of same plugin per vm? What if names aren't unique?
-    String fromUri = "direct-vm:to-plugin-" + pluginDefinition.name();
+    String fromUri = "direct:to-plugin-" + pluginDefinition.name();
 
     pluginContext = pluginDefinition.createCamelContext(fromUri);
 
-    toPlugin = teamworkContext.getEndpoint(fromUri).createProducer();
+    toPlugin = pluginContext.getEndpoint(fromUri).createProducer();
   }
 
   @Override
-  public Exchange apply(Exchange exchange) throws Exception {
+  public void process(Exchange exchange) throws Exception {
     // TODO: should create new exchange for this?
     exchange.setPattern(ExchangePattern.InOut);
 
     // TODO: How does async affect transactions? where does retry happen?
     toPlugin.process(exchange);
-
-    return exchange;
   }
 
   @Override
@@ -55,6 +54,16 @@ public final class CamelPlugin implements Plugin, RequiresStart, RequiresStop {
 
   @Override
   public void stop() throws Exception {
+    pluginContext.stop();
+  }
+
+  @Override
+  protected void doStart() throws Exception {
+    pluginContext.start();
+  }
+
+  @Override
+  protected void doStop() throws Exception {
     pluginContext.stop();
   }
 }
