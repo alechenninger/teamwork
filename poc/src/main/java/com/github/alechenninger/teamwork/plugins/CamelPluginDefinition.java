@@ -20,6 +20,10 @@ package com.github.alechenninger.teamwork.plugins;
 
 import org.apache.camel.CamelContext;
 
-public interface CamelPluginDefinition extends PluginDefinition {
-  CamelContext createCamelContext(String toPluginUri) throws Exception;
+// TODO: Could make association with CamelContextProcessor object oriented by introducing a type
+// which looks up plugin implementations and returns a usable component like a Processor, etc.
+// Maybe something like that.
+public interface CamelPluginDefinition {
+  CamelContext createCamelContext() throws Exception;
+  String toContextUri();
 }

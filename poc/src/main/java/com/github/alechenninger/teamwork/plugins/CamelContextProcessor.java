@@ -31,11 +31,8 @@ public final class CamelContextProcessor extends ServiceSupport implements Proce
 
   public CamelContextProcessor(CamelPluginDefinition pluginDefinition)
       throws Exception {
-    String fromUri = "direct:to-plugin-" + pluginDefinition.name();
-
-    pluginContext = pluginDefinition.createCamelContext(fromUri);
-
-    toPlugin = pluginContext.getEndpoint(fromUri).createProducer();
+    pluginContext = pluginDefinition.createCamelContext();
+    toPlugin = pluginContext.getEndpoint(pluginDefinition.toContextUri()).createProducer();
   }
 
   @Override
@@ -45,16 +42,6 @@ public final class CamelContextProcessor extends ServiceSupport implements Proce
 
     // TODO: How does async affect transactions? where does retry happen?
     toPlugin.process(exchange);
-  }
-
-  @Override
-  public void start() throws Exception {
-    pluginContext.start();
-  }
-
-  @Override
-  public void stop() throws Exception {
-    pluginContext.stop();
   }
 
   @Override
