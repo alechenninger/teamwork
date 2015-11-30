@@ -44,7 +44,8 @@ public final class RouterRoute extends RouteBuilder implements RemovableRoutesBu
   private final UriFactory uriFactory;
   private final MessageType messageType;
 
-  private Predicate canonicalValidator;
+  // TODO: Is it weird to be changing this mid-exchange?
+  private volatile Predicate canonicalValidator;
 
   public RouterRoute(MessageType messageType, Predicate canonicalValidator,
       RouterUriFactory canonicalTopic, UriFactory uriFactory) {

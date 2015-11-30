@@ -23,5 +23,5 @@ import com.github.alechenninger.teamwork.RemovableRoutesBuilder;
 import org.apache.camel.Predicate;
 
 public interface ProducerFilter extends RemovableRoutesBuilder {
-  void filterProducer(Predicate filter);
+  void filterProducer(Predicate filter) throws Exception;
 }

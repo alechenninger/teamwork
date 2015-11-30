@@ -18,23 +18,12 @@
 
 package com.github.alechenninger.teamwork;
 
-import com.github.alechenninger.teamwork.consumer.ConsumerPluginUriFactory;
-import com.github.alechenninger.teamwork.consumer.DirectVmConsumerPluginUriFactory;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
-import com.github.alechenninger.teamwork.producer.DirectVmProducerPluginUriFactory;
-import com.github.alechenninger.teamwork.producer.PreSortedProducerPickUp;
-import com.github.alechenninger.teamwork.producer.ProducerDelivery;
-import com.github.alechenninger.teamwork.producer.ProducerPlugin;
-import com.github.alechenninger.teamwork.producer.ProducerPluginUriFactory;
-import com.github.alechenninger.teamwork.router.DirectRouterUriFactory;
-import com.github.alechenninger.teamwork.router.RouterUriFactory;
+import com.github.alechenninger.teamwork.producer.ProducerRoute;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
-import org.apache.camel.ServiceStatus;
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
+import org.apache.camel.Processor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,59 +35,20 @@ public class Teamwork implements TeamworkApi {
   // TODO: Need to be more flexible about uri's (multicast to multiple routers, send to different application endpoints...)
   private final UriFactory uriFactory;
 
-  private final Map<UserMessageType, CamelContext> producerContexts = new HashMap<>();
-  private final Map<UserMessageType, CamelContext> consumerContexts = new HashMap<>();
-
+  private final Map<UserMessageType, ProducerRoute> producers = new HashMap<>();
   private final Map<MessageType, Router> routers = new HashMap<>();
-
-  // TODO: Inject these or maybe handle some other way
-  private final ProducerPluginUriFactory producerUriFactory = new DirectVmProducerPluginUriFactory();
-  private final ConsumerPluginUriFactory consumerUriFactory = new DirectVmConsumerPluginUriFactory();
 
   public Teamwork(UriFactory uriFactory, CamelContext teamworkContext) {
     this.uriFactory = Objects.requireNonNull(uriFactory, "uriFactory");
     this.teamworkContext = Objects.requireNonNull(teamworkContext, "teamworkContext");
-
-    teamworkContext.addLifecycleStrategy(
-        new LinkedCamelContextLifecycleStrategy(
-            Iterables.concat(producerContexts.values(), consumerContexts.values())));
   }
 
   @Override
   // TODO: use more specific synchronization primitive instead of method level
-  public synchronized void addProducerPlugin(UserName userName, ProducerPlugin plugin) throws Exception {
-    MessageType messageType = plugin.messageType();
-
+  public synchronized void addProducerPlugin(UserName userName, MessageType messageType,
+      Processor producerProcessor) throws Exception {
     // TODO: Handle failure scenarios
 
-    CamelContext newContextForProducer = plugin.createContext(
-        producerUriFactory.toProducerPlugin(userName, messageType),
-        producerUriFactory.fromProducerPlugin(userName, messageType));
-
-    newContextForProducer.setNameStrategy(new DefaultCamelContextNameStrategy(
-        Joiner.on('-').join(userName, "producer", messageType)));
-
-    CamelContext previous = producerContexts.put(
-        new UserMessageType(userName, messageType),
-        newContextForProducer);
-
-    if (previous == null) {
-      PreSortedProducerPickUp pickUpRoute = new PreSortedProducerPickUp(
-          userName, messageType, producerUriFactory, uriFactory);
-      pickUpRoute.addRoutesToCamelContext(teamworkContext);
-
-      ProducerDelivery deliveryRoute = new ProducerDelivery(
-          userName, messageType, producerUriFactory, uriFactory);
-      deliveryRoute.addRoutesToCamelContext(teamworkContext);
-    } else {
-      previous.stop();
-    }
-
-    ServiceStatus teamworkContextStatus = teamworkContext.getStatus();
-    if (teamworkContextStatus.equals(ServiceStatus.Started) ||
-        teamworkContextStatus.equals(ServiceStatus.Starting)) {
-      newContextForProducer.start();
-    }
   }
 
   @Override

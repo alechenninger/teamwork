@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.ServiceHelper;
 
 // Per user per type
 public class ProducerFilterRoute extends RouteBuilder implements ProducerFilter {
@@ -47,8 +48,11 @@ public class ProducerFilterRoute extends RouteBuilder implements ProducerFilter 
   }
 
   @Override
-  public void filterProducer(Predicate filter) {
+  public void filterProducer(Predicate filter) throws Exception {
+    ServiceHelper.startService(filter);
+    Predicate oldFilter = producerFilter;
     producerFilter = filter;
+    ServiceHelper.stopAndShutdownService(oldFilter);
   }
 
   @Override

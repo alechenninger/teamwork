@@ -23,28 +23,30 @@ import com.github.alechenninger.teamwork.UserName;
 import com.github.alechenninger.teamwork.Destination;
 import com.github.alechenninger.teamwork.endpoints.UriFactory;
 
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
-public class PreSortedProducerPickUp extends RouteBuilder {
+public class ProducerRoute extends RouteBuilder {
   private final UserName userName;
   private final MessageType messageType;
-  private final ProducerPluginUriFactory pluginUriFactory;
-  private final UriFactory pickUpUriFactory;
+  private final Processor producerProcessor;
+  private final UriFactory uriFactory;
 
-  public PreSortedProducerPickUp(UserName userName, MessageType messageType,
-      ProducerPluginUriFactory pluginUriFactory, UriFactory pickUpUriFactory) {
+  public ProducerRoute(UserName userName, MessageType messageType,
+      Processor producerProcessor, UriFactory uriFactory) {
     this.userName = userName;
     this.messageType = messageType;
-    this.pluginUriFactory = pluginUriFactory;
-    this.pickUpUriFactory = pickUpUriFactory;
+    this.producerProcessor = producerProcessor;
+    this.uriFactory = uriFactory;
   }
 
   @Override
   public void configure() throws Exception {
-    from(pickUpUriFactory.forDestination(userName, messageType, Destination.PRODUCER))
+    from(uriFactory.forDestination(userName, messageType, Destination.PRODUCER))
         .routeId("producer_pick_up_" + userName + "_" + messageType)
         // TODO: Throttling, logging, metrics, reporting
-        .to(pluginUriFactory.toProducerPlugin(userName, messageType));
+        .process(producerProcessor)
+        .to(uriFactory.forDestination(userName, messageType, Destination.ROUTER));
 
     // TODO: Maybe want to not accept from factory in constructor and instead allow mutability
     // and manage route stop/start here
